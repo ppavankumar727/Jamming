@@ -16,8 +16,8 @@ const Track = (props) => {
         <h3>{props.track.name}</h3>
         <p>{props.track.artist} | {props.track.album}</p>
       </div>
-      <button className="Track-action" onClick={addTrack}>+</button>
-      <button className="Track-action" onClick={removeTrack}>-</button>
+      { props.onAdd ? <button className="Track-action" onClick={addTrack}>+</button> : null}
+      { props.onRemove ? <button className="Track-action" onClick={removeTrack}>-</button> : null}
     </div>
   );
 }

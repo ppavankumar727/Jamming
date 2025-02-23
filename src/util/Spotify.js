@@ -4,9 +4,6 @@ const redirectUri = 'http://localhost:3000/';
 let accessToken;
 const Spotify = {
     getAccessToken(){
-      if(accessToken){
-        return accessToken;
-      }
       const url = `https://accounts.spotify.com/api/token`;
       const headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -25,10 +22,11 @@ const Spotify = {
           window.setTimeout(() => accessToken = '', expiresIn * 1000);
           window.history.pushState('Access Token', null, '/');
         }
+        return accessToken;
       });
     },
-    search(term) {
-      const accessToken = Spotify.getAccessToken();
+    async search(term) {
+      const accessToken = await Spotify.getAccessToken();
       return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`
@@ -49,12 +47,12 @@ const Spotify = {
       });
     },
   
-    savePlaylist(name, trackUris) {
+    async savePlaylist(name, trackUris) {
       if (!name || !trackUris.length) {
         return;
       }
   
-      const accessToken = Spotify.getAccessToken();
+      const accessToken = await Spotify.getAccessToken();
       const headers = { Authorization: `Bearer ${accessToken}` };
       let userId;
   

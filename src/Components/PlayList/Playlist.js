@@ -14,7 +14,7 @@ function Playlist(props) {
                 onChange={handleNameChange} 
             />
             <TrackList 
-                tracks={props.playListTracks} 
+                tracks={props.playlistTracks} 
                 onRemove={props.onRemove} 
                 isRemoval={props.onRemove} 
             />
