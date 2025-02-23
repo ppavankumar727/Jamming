@@ -1,23 +1,31 @@
 const clientId = 'c49df6ef536c4add80df0a9494c89952';
+const client_secret = '031196dc0dca4851b30f40e9480e9676';
 const redirectUri = 'http://localhost:3000/';
 let accessToken;
 const Spotify = {
     getAccessToken(){
-        if(accessToken){
-            return accessToken;
-        }
-        const accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
-        const expiresInMatch = window.location.href.match(/expires_in=([^&]*)/);
-        if (accessTokenMatch && expiresInMatch) {
-          accessToken = accessTokenMatch[1];
-          const expiresIn = Number(expiresInMatch[1]);
+      if(accessToken){
+        return accessToken;
+      }
+      const url = `https://accounts.spotify.com/api/token`;
+      const headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      };
+      const body = `grant_type=client_credentials&client_id=${clientId}&client_secret=${client_secret}`;
+      
+      return fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: body
+      }).then(response => response.json()
+      ).then(jsonResponse => {
+        accessToken = jsonResponse.access_token;
+        let expiresIn = jsonResponse.expires_in;
+        if (accessToken && expiresIn) {
           window.setTimeout(() => accessToken = '', expiresIn * 1000);
-          window.history.pushState('Access Token', null, '/'); // This clears the parameters, allowing us to grab a new access token when it expires.
-          return accessToken;
-        } else {
-          const accessUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectUri}`;
-          window.location = accessUrl;
+          window.history.pushState('Access Token', null, '/');
         }
+      });
     },
     search(term) {
       const accessToken = Spotify.getAccessToken();
